@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Trading Dashboard | Whale Watch & Signals</title>
+    <link rel="stylesheet" href="dashboard.css">
+    <script src="https://s3.tradingview.com/tv.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-left">
+            <h1>Crypto Trading Dashboard</h1>
+            <span class="subtitle">Whale Watch & Technical Signals</span>
+        </div>
+        <div class="header-right">
+            <div class="status-indicator">
+                <span class="pulse-dot"></span>
+                <span>Live</span>
+            </div>
+            <div class="last-update" id="last-update">--:--:--</div>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <a href="#prices" class="nav-link active">Prices</a>
+        <a href="#signals" class="nav-link">Signals</a>
+        <a href="#whale" class="nav-link">Whale Watch</a>
+        <a href="#charts" class="nav-link">Charts</a>
+    </nav>
+
+    <main class="main">
+        <!-- Price Ticker -->
+        <section class="price-ticker" id="prices">
+            <div class="ticker-header">
+                <h2>Live Prices</h2>
+                <span class="source">Powered by CoinGecko & Binance</span>
+            </div>
+            <div class="ticker-grid" id="price-grid">
+                <!-- Prices loaded via JS -->
+            </div>
+        </section>
+
+        <!-- Trading Signals -->
+        <section class="signals-section" id="signals">
+            <div class="section-header">
+                <h2>Technical Signals</h2>
+                <span class="signal-count">0 Active Signals</span>
+            </div>
+            <div class="signals-grid" id="signals-grid">
+                <!-- Signals loaded via JS -->
+            </div>
+        </section>
+
+        <!-- Whale Watch -->
+        <section class="whale-section" id="whale">
+            <div class="section-header">
+                <h2>🐋 Whale Watch</h2>
+                <span class="whale-count">Large Transactions (>>$100K)</span>
+            </div>
+            <div class="whale-feed" id="whale-feed">
+                <!-- Whale alerts loaded via JS -->
+            </div>
+        </section>
+
+        <!-- TradingView Charts -->
+        <section class="charts-section" id="charts">
+            <div class="section-header">
+                <h2>TradingView Charts</h2>
+            </div>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="tradingview-widget-container" id="tv-chart-1"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>Crypto Trading Dashboard | Data from CoinGecko, Binance & Whale Alert</p>
+        <p><em>Not financial advice. Trade at your own risk.</em></p>
+    </footer>
+
+    <script src="dashboard.js"></script>
+</body>
+</html>
