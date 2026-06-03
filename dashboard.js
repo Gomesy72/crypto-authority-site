@@ -246,12 +246,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboard = new TradingDashboard();
     const whaleWatch = new WhaleWatch();
 
-    // Navigation
+    // Navigation - Smooth scroll to sections
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
+            
+            // Remove active class from all links
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            // Add active class to clicked link
             link.classList.add('active');
+            
+            // Get the target section id from href
+            const targetId = link.getAttribute('href');
+            if (targetId && targetId.startsWith('#')) {
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
         });
     });
 });
