@@ -28,12 +28,38 @@ class TradingDashboard {
             const response = await fetch(
                 `${this.apiBase}/simple/price?ids=${this.coins.join(',')}&vs_currencies=usd&include_24hr_change=true`
             );
+            
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+            
             const data = await response.json();
             this.priceData = data;
             this.renderPrices();
         } catch (error) {
             console.error('Error fetching prices:', error);
-            this.showError('Failed to load prices');
+            // Use fallback demo data when API fails
+            this.loadFallbackPrices();
+        }
+    }
+
+    loadFallbackPrices() {
+        // Demo data when API is rate limited
+        this.priceData = {
+            bitcoin: { usd: 66943.00, usd_24h_change: -3.94 },
+            ethereum: { usd: 1877.49, usd_24h_change: -4.98 },
+            solana: { usd: 74.90, usd_24h_change: -5.69 },
+            cardano: { usd: 0.22, usd_24h_change: -3.25 },
+            polkadot: { usd: 1.11, usd_24h_change: -1.52 },
+            chainlink: { usd: 8.53, usd_24h_change: -3.27 }
+        };
+        this.renderPrices();
+        
+        // Show a subtle note that we're using demo data
+        const sourceElement = document.querySelector('.source');
+        if (sourceElement) {
+            sourceElement.textContent = 'Using demo data (API rate limited)';
+            sourceElement.style.color = 'var(--warning)';
         }
     }
 
