@@ -53,8 +53,10 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
     width: 100%;
     max-width: 100%;
@@ -121,8 +123,10 @@ body {
     max-width: 100%;
     box-sizing: border-box;
     scrollbar-width: none;
-    position: sticky;
-    top: 60px; /* Height of header */
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
     z-index: 99;
 }
 
@@ -151,6 +155,7 @@ body {
     overflow-x: hidden;
     box-sizing: border-box;
     position: relative;
+    padding-top: 120px; /* Space for fixed header (60px) + nav (60px) */
 }
 
 section {
