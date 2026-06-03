@@ -4,7 +4,16 @@
 class TradingDashboard {
     constructor() {
         this.apiBase = 'https://api.coingecko.com/api/v3';
+        this.binanceBase = 'https://api.binance.com/api/v3';
         this.coins = ['bitcoin', 'ethereum', 'solana', 'cardano', 'polkadot', 'chainlink'];
+        this.binanceSymbols = {
+            bitcoin: 'BTCUSDT',
+            ethereum: 'ETHUSDT',
+            solana: 'SOLUSDT',
+            cardano: 'ADAUSDT',
+            polkadot: 'DOTUSDT',
+            chainlink: 'LINKUSDT'
+        };
         this.priceData = {};
         this.signals = [];
         this.init();
@@ -12,7 +21,7 @@ class TradingDashboard {
 
     async init() {
         this.updateTimestamp();
-        await this.fetchPrices();
+        await this.fetchBinancePrices();
         this.generateSignals();
         this.setupTradingView();
         this.startAutoUpdate();
@@ -23,43 +32,44 @@ class TradingDashboard {
         document.getElementById('last-update').textContent = now.toLocaleTimeString();
     }
 
-    async fetchPrices() {
+    async fetchBinancePrices() {
         try {
+            const symbols = Object.values(this.binanceSymbols).join(',');
             const response = await fetch(
-                `${this.apiBase}/simple/price?ids=${this.coins.join(',')}&vs_currencies=usd&include_24hr_change=true`
+                `${this.binanceBase}/ticker/24hr?symbols=["${Object.values(this.binanceSymbols).join('","')}"]`
             );
             
             if (!response.ok) {
-                throw new Error(`API Error: ${response.status}`);
+                throw new Error(`Binance API Error: ${response.status}`);
             }
             
             const data = await response.json();
-            this.priceData = data;
+            
+            // Convert Binance format to our format
+            this.priceData = {};
+            data.forEach(ticker => {
+                const coinKey = Object.keys(this.binanceSymbols).find(
+                    key => this.binanceSymbols[key] === ticker.symbol
+                );
+                if (coinKey) {
+                    this.priceData[coinKey] = {
+                        usd: parseFloat(ticker.lastPrice),
+                        usd_24h_change: parseFloat(ticker.priceChangePercent)
+                    };
+                }
+            });
+            
             this.renderPrices();
+            
+            // Update source text
+            const sourceElement = document.querySelector('.source');
+            if (sourceElement) {
+                sourceElement.textContent = 'Powered by Binance API - Live Data';
+                sourceElement.style.color = 'var(--accent)';
+            }
         } catch (error) {
-            console.error('Error fetching prices:', error);
-            // Use fallback demo data when API fails
-            this.loadFallbackPrices();
-        }
-    }
-
-    loadFallbackPrices() {
-        // Demo data when API is rate limited
-        this.priceData = {
-            bitcoin: { usd: 66943.00, usd_24h_change: -3.94 },
-            ethereum: { usd: 1877.49, usd_24h_change: -4.98 },
-            solana: { usd: 74.90, usd_24h_change: -5.69 },
-            cardano: { usd: 0.22, usd_24h_change: -3.25 },
-            polkadot: { usd: 1.11, usd_24h_change: -1.52 },
-            chainlink: { usd: 8.53, usd_24h_change: -3.27 }
-        };
-        this.renderPrices();
-        
-        // Show a subtle note that we're using demo data
-        const sourceElement = document.querySelector('.source');
-        if (sourceElement) {
-            sourceElement.textContent = 'Using demo data (API rate limited)';
-            sourceElement.style.color = 'var(--warning)';
+            console.error('Error fetching Binance prices:', error);
+            this.showError('Failed to load prices - API temporarily unavailable');
         }
     }
 
@@ -187,11 +197,11 @@ class TradingDashboard {
     }
 
     startAutoUpdate() {
-        // Update prices every 30 seconds
+        // Update prices every 10 seconds using Binance
         setInterval(() => {
             this.updateTimestamp();
-            this.fetchPrices();
-        }, 30000);
+            this.fetchBinancePrices();
+        }, 10000);
 
         // Generate new signals every 5 minutes
         setInterval(() => {
