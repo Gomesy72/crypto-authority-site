@@ -52,7 +52,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 100;
     width: 100%;
     max-width: 100%;
@@ -118,7 +119,8 @@ body {
     max-width: 100%;
     box-sizing: border-box;
     scrollbar-width: none;
-    position: relative;
+    position: sticky;
+    top: 0;
     z-index: 99;
 }
 
