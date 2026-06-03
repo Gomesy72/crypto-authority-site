@@ -47,10 +47,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: fixed;
+    position: sticky;
     top: 0;
-    left: 0;
-    right: 0;
     z-index: 1000;
     height: 60px;
     width: 100%;
@@ -111,10 +109,8 @@ body {
     gap: 0;
     overflow-x: auto;
     width: 100%;
-    position: fixed;
+    position: sticky;
     top: 60px;
-    left: 0;
-    right: 0;
     z-index: 999;
     height: 50px;
     scrollbar-width: none;
@@ -142,19 +138,17 @@ body {
     border-bottom-color: var(--accent);
 }
 
-/* Main Content - Offset for fixed header and nav */
+/* Main Content */
 .main {
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
     width: 100%;
-    padding-top: 130px; /* 60px header + 50px nav + 20px gap */
 }
 
 section {
     margin-bottom: 2rem;
     width: 100%;
-    scroll-margin-top: 130px;
 }
 
 .section-header {
