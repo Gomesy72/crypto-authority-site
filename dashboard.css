@@ -39,6 +39,14 @@ body {
     overflow-x: hidden;
 }
 
+/* Sticky Header Container */
+.sticky-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    width: 100%;
+}
+
 /* Header */
 .header {
     background: var(--bg-secondary);
@@ -47,58 +55,8 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 1000;
     height: 60px;
-}
-
-.header-left h1 {
-    font-size: 1.5rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, var(--accent), #3b82f6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.subtitle {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-}
-
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.status-indicator {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: var(--success);
-    font-size: 0.9rem;
-}
-
-.pulse-dot {
-    width: 8px;
-    height: 8px;
-    background: var(--success);
-    border-radius: 50%;
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-
-.last-update {
-    color: var(--text-secondary);
-    font-family: monospace;
-    font-size: 0.85rem;
+    width: 100%;
 }
 
 /* Navigation */
@@ -110,23 +68,20 @@ body {
     gap: 0;
     overflow-x: auto;
     width: 100%;
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
-    z-index: 999;
     height: 50px;
     scrollbar-width: none;
 }
 
 .nav-link {
-    padding: 1rem 1.5rem;
+    padding: 0.8rem 1.5rem;
     color: var(--text-secondary);
     text-decoration: none;
     font-weight: 500;
     border-bottom: 2px solid transparent;
     transition: all 0.2s;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
 }
 
 .nav-link:hover,
@@ -135,19 +90,19 @@ body {
     border-bottom-color: var(--accent);
 }
 
-/* Main Content - Offset for fixed header and nav */
+/* Main Content */
 .main {
     max-width: 1400px;
     margin: 0 auto;
     padding: 2rem;
     width: 100%;
-    padding-top: 130px; /* 60px header + 50px nav + 20px gap */
+    padding-top: 20px;
 }
 
 section {
     margin-bottom: 2rem;
     width: 100%;
-    scroll-margin-top: 130px; /* Account for fixed header + nav */
+    scroll-margin-top: 120px;
 }
 
 .section-header {
