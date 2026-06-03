@@ -49,9 +49,7 @@ body {
     align-items: center;
     position: sticky;
     top: 0;
-    z-index: 1000;
-    height: 60px;
-    width: 100%;
+    z-index: 100;
 }
 
 .header-left h1 {
@@ -108,28 +106,16 @@ body {
     display: flex;
     gap: 0;
     overflow-x: auto;
-    width: 100%;
-    position: sticky;
-    top: 60px;
-    z-index: 999;
-    height: 50px;
-    scrollbar-width: none;
-}
-
-.nav::-webkit-scrollbar {
-    display: none;
 }
 
 .nav-link {
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 1.5rem;
     color: var(--text-secondary);
     text-decoration: none;
     font-weight: 500;
     border-bottom: 2px solid transparent;
     transition: all 0.2s;
     white-space: nowrap;
-    display: flex;
-    align-items: center;
 }
 
 .nav-link:hover,
