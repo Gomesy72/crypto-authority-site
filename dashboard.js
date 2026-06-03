@@ -1,17 +1,9 @@
 // Crypto Trading Dashboard - Main JavaScript
-// Uses Binance API for real-time prices (higher rate limits than CoinGecko)
+// Uses Binance API for real-time prices
 
 class TradingDashboard {
     constructor() {
         this.coins = ['bitcoin', 'ethereum', 'solana', 'cardano', 'polkadot', 'chainlink'];
-        this.binanceSymbols = {
-            bitcoin: 'BTCUSDT',
-            ethereum: 'ETHUSDT',
-            solana: 'SOLUSDT',
-            cardano: 'ADAUSDT',
-            polkadot: 'DOTUSDT',
-            chainlink: 'LINKUSDT'
-        };
         this.priceData = {};
         this.init();
     }
@@ -31,23 +23,27 @@ class TradingDashboard {
 
     async fetchBinancePrices() {
         try {
-            const symbols = Object.values(this.binanceSymbols);
-            const response = await fetch(
-                `https://api.binance.com/api/v3/ticker/24hr?symbols=${JSON.stringify(symbols)}`
+            // Use individual ticker requests for reliability
+            const symbols = ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'ADAUSDT', 'DOTUSDT', 'LINKUSDT'];
+            const promises = symbols.map(symbol => 
+                fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`)
+                    .then(res => res.json())
             );
             
-            if (!response.ok) {
-                throw new Error(`Binance API Error: ${response.status}`);
-            }
+            const results = await Promise.all(promises);
             
-            const data = await response.json();
+            const coinMap = {
+                'BTCUSDT': 'bitcoin',
+                'ETHUSDT': 'ethereum',
+                'SOLUSDT': 'solana',
+                'ADAUSDT': 'cardano',
+                'DOTUSDT': 'polkadot',
+                'LINKUSDT': 'chainlink'
+            };
             
-            // Convert Binance format to our format
             this.priceData = {};
-            data.forEach(ticker => {
-                const coinKey = Object.keys(this.binanceSymbols).find(
-                    key => this.binanceSymbols[key] === ticker.symbol
-                );
+            results.forEach(ticker => {
+                const coinKey = coinMap[ticker.symbol];
                 if (coinKey) {
                     this.priceData[coinKey] = {
                         usd: parseFloat(ticker.lastPrice),
@@ -59,7 +55,8 @@ class TradingDashboard {
             this.renderPrices();
         } catch (error) {
             console.error('Error fetching prices:', error);
-            document.getElementById('price-grid').innerHTML = '<div class="loading">Failed to load prices - API temporarily unavailable</div>';
+            document.getElementById('price-grid').innerHTML = 
+                '<div class="loading">Failed to load prices - please refresh</div>';
         }
     }
 
@@ -186,7 +183,7 @@ class TradingDashboard {
     }
 }
 
-// Whale Watch - Simulated whale transactions
+// Whale Watch
 class WhaleWatch {
     constructor() {
         this.transactions = [];
@@ -241,7 +238,7 @@ class WhaleWatch {
     }
 }
 
-// Initialize dashboard
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
     new TradingDashboard();
     new WhaleWatch();
