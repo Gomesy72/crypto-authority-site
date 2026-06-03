@@ -1,18 +1,24 @@
 // Crypto Trading Dashboard - Main JavaScript
-// Fetches real-time data from CoinGecko and generates trading signals
+// Uses Binance API for real-time prices (higher rate limits than CoinGecko)
 
 class TradingDashboard {
     constructor() {
-        this.apiBase = 'https://api.coingecko.com/api/v3';
         this.coins = ['bitcoin', 'ethereum', 'solana', 'cardano', 'polkadot', 'chainlink'];
+        this.binanceSymbols = {
+            bitcoin: 'BTCUSDT',
+            ethereum: 'ETHUSDT',
+            solana: 'SOLUSDT',
+            cardano: 'ADAUSDT',
+            polkadot: 'DOTUSDT',
+            chainlink: 'LINKUSDT'
+        };
         this.priceData = {};
-        this.signals = [];
         this.init();
     }
 
     async init() {
         this.updateTimestamp();
-        await this.fetchPrices();
+        await this.fetchBinancePrices();
         this.generateSignals();
         this.setupTradingView();
         this.startAutoUpdate();
@@ -23,17 +29,37 @@ class TradingDashboard {
         document.getElementById('last-update').textContent = now.toLocaleTimeString();
     }
 
-    async fetchPrices() {
+    async fetchBinancePrices() {
         try {
+            const symbols = Object.values(this.binanceSymbols);
             const response = await fetch(
-                `${this.apiBase}/simple/price?ids=${this.coins.join(',')}&vs_currencies=usd&include_24hr_change=true`
+                `https://api.binance.com/api/v3/ticker/24hr?symbols=${JSON.stringify(symbols)}`
             );
+            
+            if (!response.ok) {
+                throw new Error(`Binance API Error: ${response.status}`);
+            }
+            
             const data = await response.json();
-            this.priceData = data;
+            
+            // Convert Binance format to our format
+            this.priceData = {};
+            data.forEach(ticker => {
+                const coinKey = Object.keys(this.binanceSymbols).find(
+                    key => this.binanceSymbols[key] === ticker.symbol
+                );
+                if (coinKey) {
+                    this.priceData[coinKey] = {
+                        usd: parseFloat(ticker.lastPrice),
+                        usd_24h_change: parseFloat(ticker.priceChangePercent)
+                    };
+                }
+            });
+            
             this.renderPrices();
         } catch (error) {
             console.error('Error fetching prices:', error);
-            this.showError('Failed to load prices');
+            document.getElementById('price-grid').innerHTML = '<div class="loading">Failed to load prices - API temporarily unavailable</div>';
         }
     }
 
@@ -82,7 +108,7 @@ class TradingDashboard {
             const coin = this.coins[i];
             const type = signalTypes[Math.floor(Math.random() * signalTypes.length)];
             const indicator = indicators[Math.floor(Math.random() * indicators.length)];
-            const strength = Math.floor(Math.random() * 40) + 60; // 60-100
+            const strength = Math.floor(Math.random() * 40) + 60;
 
             signals.push({
                 coin: coin.charAt(0).toUpperCase() + coin.slice(1),
@@ -104,15 +130,12 @@ class TradingDashboard {
         signals.forEach(signal => {
             const card = document.createElement('div');
             card.className = 'signal-card';
-
             const typeClass = `signal-${signal.type}`;
             const typeText = signal.type.toUpperCase();
 
             card.innerHTML = `
                 <div class="signal-header">
-                    <div>
-                        <strong>${signal.symbol}</strong> - ${signal.coin}
-                    </div>
+                    <div><strong>${signal.symbol}</strong> - ${signal.coin}</div>
                     <span class="signal-type ${typeClass}">${typeText}</span>
                 </div>
                 <div style="margin-top: 0.5rem;">
@@ -126,22 +149,17 @@ class TradingDashboard {
                             <div style="width: ${signal.strength}%; height: 100%; background: linear-gradient(90deg, var(--accent), #3b82f6); border-radius: 3px; transition: width 0.5s;"></div>
                         </div>
                     </div>
-                    <div style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.5rem;">
-                        Generated: ${signal.time}
-                    </div>
+                    <div style="color: var(--text-secondary); font-size: 0.8rem; margin-top: 0.5rem;">Generated: ${signal.time}</div>
                 </div>
             `;
-
             grid.appendChild(card);
         });
 
-        // Update signal count
         document.querySelector('.signal-count').textContent = `${signals.length} Active Signals`;
     }
 
     setupTradingView() {
-        // TradingView Widget
-        const widget = new TradingView.widget({
+        new TradingView.widget({
             container_id: 'tv-chart-1',
             symbol: 'BINANCE:BTCUSDT',
             interval: '1H',
@@ -152,30 +170,19 @@ class TradingDashboard {
             enable_publishing: false,
             allow_symbol_change: true,
             height: 500,
-            studies: [
-                'RSI@tv-basicstudies',
-                'MACD@tv-basicstudies',
-                'MASimple@tv-basicstudies'
-            ]
+            studies: ['RSI@tv-basicstudies', 'MACD@tv-basicstudies', 'MASimple@tv-basicstudies']
         });
     }
 
     startAutoUpdate() {
-        // Update prices every 30 seconds
         setInterval(() => {
             this.updateTimestamp();
-            this.fetchPrices();
-        }, 30000);
+            this.fetchBinancePrices();
+        }, 10000);
 
-        // Generate new signals every 5 minutes
         setInterval(() => {
             this.generateSignals();
         }, 300000);
-    }
-
-    showError(message) {
-        const grid = document.getElementById('price-grid');
-        grid.innerHTML = `<div class="loading">${message}</div>`;
     }
 }
 
@@ -197,7 +204,7 @@ class WhaleWatch {
 
         for (let i = 0; i < 10; i++) {
             const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-            const amount = (Math.random() * 900 + 100).toFixed(2); // 100-1000
+            const amount = (Math.random() * 900 + 100).toFixed(2);
             const type = types[Math.floor(Math.random() * types.length)];
             const time = new Date(Date.now() - Math.random() * 3600000).toLocaleTimeString();
 
@@ -210,7 +217,6 @@ class WhaleWatch {
             });
         }
 
-        // Sort by time (newest first)
         this.transactions.sort((a, b) => new Date(b.time) - new Date(a.time));
     }
 
@@ -221,48 +227,22 @@ class WhaleWatch {
         this.transactions.forEach(tx => {
             const item = document.createElement('div');
             item.className = 'whale-transaction';
-
             const amountFormatted = tx.amount.toLocaleString('en-US', { minimumFractionDigits: 2 });
 
             item.innerHTML = `
                 <div>
-                    <div style="font-weight: 600; color: var(--text-primary);">
-                        ${tx.type} ${amountFormatted} ${tx.symbol}
-                    </div>
-                    <div style="color: var(--text-secondary); font-size: 0.85rem;">
-                        Value: $${parseInt(tx.value).toLocaleString()}
-                    </div>
+                    <div style="font-weight: 600; color: var(--text-primary);">${tx.type} ${amountFormatted} ${tx.symbol}</div>
+                    <div style="color: var(--text-secondary); font-size: 0.85rem;">Value: $${parseInt(tx.value).toLocaleString()}</div>
                 </div>
                 <div class="whale-time">${tx.time}</div>
             `;
-
             feed.appendChild(item);
         });
     }
 }
 
-// Initialize dashboard when DOM is ready
+// Initialize dashboard
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize components
-    const dashboard = new TradingDashboard();
-    const whaleWatch = new WhaleWatch();
-
-    // Navigation - Simple anchor links, no JavaScript interference
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', (e) => {
-            // Don't prevent default - let anchor links work naturally
-            // Just update active state
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-            
-            // Smooth scroll to target
-            const href = link.getAttribute('href');
-            if (href && href.startsWith('#')) {
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }
-        });
-    });
+    new TradingDashboard();
+    new WhaleWatch();
 });

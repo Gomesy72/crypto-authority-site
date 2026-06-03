@@ -31,40 +31,32 @@
     </nav>
 
     <main class="main">
-        <!-- Price Ticker -->
         <section class="price-ticker" id="prices">
             <div class="ticker-header">
                 <h2>Live Prices</h2>
-                <span class="source">Powered by CoinGecko & Binance</span>
+                <span class="source">Powered by Binance API</span>
             </div>
             <div class="ticker-grid" id="price-grid">
-                <!-- Prices loaded via JS -->
+                <div class="loading">Loading prices...</div>
             </div>
         </section>
 
-        <!-- Trading Signals -->
         <section class="signals-section" id="signals">
             <div class="section-header">
                 <h2>Technical Signals</h2>
                 <span class="signal-count">0 Active Signals</span>
             </div>
-            <div class="signals-grid" id="signals-grid">
-                <!-- Signals loaded via JS -->
-            </div>
+            <div class="signals-grid" id="signals-grid"></div>
         </section>
 
-        <!-- Whale Watch -->
         <section class="whale-section" id="whale">
             <div class="section-header">
                 <h2>🐋 Whale Watch</h2>
                 <span class="whale-count">Large Transactions (>>$100K)</span>
             </div>
-            <div class="whale-feed" id="whale-feed">
-                <!-- Whale alerts loaded via JS -->
-            </div>
+            <div class="whale-feed" id="whale-feed"></div>
         </section>
 
-        <!-- TradingView Charts -->
         <section class="charts-section" id="charts">
             <div class="section-header">
                 <h2>TradingView Charts</h2>
@@ -78,7 +70,7 @@
     </main>
 
     <footer class="footer">
-        <p>Crypto Trading Dashboard | Data from CoinGecko, Binance & Whale Alert</p>
+        <p>Crypto Trading Dashboard | Data from Binance & Whale Alert</p>
         <p><em>Not financial advice. Trade at your own risk.</em></p>
     </footer>
     </div>
