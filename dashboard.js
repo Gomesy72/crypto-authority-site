@@ -247,20 +247,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const dashboard = new TradingDashboard();
     const whaleWatch = new WhaleWatch();
 
-    // Navigation - Simple anchor links, no JavaScript interference
+    // Navigation - Handle clicks with fixed header offset
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
-            // Don't prevent default - let anchor links work naturally
-            // Just update active state
+            e.preventDefault();
+            
+            // Remove active class from all links
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            // Add active class to clicked link
             link.classList.add('active');
             
-            // Smooth scroll to target
-            const href = link.getAttribute('href');
-            if (href && href.startsWith('#')) {
-                const target = document.querySelector(href);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Get the target section id from href
+            const targetId = link.getAttribute('href');
+            if (targetId && targetId.startsWith('#')) {
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    // Calculate offset for fixed header (60px) + nav (~50px)
+                    const headerOffset = 110;
+                    const elementPosition = targetSection.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
                 }
             }
         });
