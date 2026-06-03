@@ -243,28 +243,24 @@ class WhaleWatch {
 
 // Initialize dashboard when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize components
     const dashboard = new TradingDashboard();
     const whaleWatch = new WhaleWatch();
 
-    // Navigation - Smooth scroll to sections
+    // Navigation - Simple anchor links, no JavaScript interference
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', (e) => {
-            e.preventDefault();
-            
-            // Remove active class from all links
+            // Don't prevent default - let anchor links work naturally
+            // Just update active state
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            // Add active class to clicked link
             link.classList.add('active');
             
-            // Get the target section id from href
-            const targetId = link.getAttribute('href');
-            if (targetId && targetId.startsWith('#')) {
-                const targetSection = document.querySelector(targetId);
-                if (targetSection) {
-                    targetSection.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+            // Smooth scroll to target
+            const href = link.getAttribute('href');
+            if (href && href.startsWith('#')) {
+                const target = document.querySelector(href);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             }
         });
