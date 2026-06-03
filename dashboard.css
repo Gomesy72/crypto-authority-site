@@ -23,7 +23,6 @@ html {
     width: 100%;
     position: relative;
     scroll-behavior: smooth;
-    scroll-padding-top: 120px; /* Height of header + nav */
 }
 
 body {
@@ -53,16 +52,12 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    position: relative;
     z-index: 100;
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
     overflow: hidden;
-    height: 60px;
 }
 
 .header-left h1 {
@@ -123,10 +118,7 @@ body {
     max-width: 100%;
     box-sizing: border-box;
     scrollbar-width: none;
-    position: fixed;
-    top: 60px;
-    left: 0;
-    right: 0;
+    position: relative;
     z-index: 99;
 }
 
@@ -155,7 +147,6 @@ body {
     overflow-x: hidden;
     box-sizing: border-box;
     position: relative;
-    padding-top: 120px; /* Space for fixed header (60px) + nav (60px) */
 }
 
 section {
@@ -164,7 +155,6 @@ section {
     max-width: 100%;
     overflow-x: hidden;
     box-sizing: border-box;
-    scroll-margin-top: 120px; /* Account for sticky header + nav */
 }
 
 .section-header {
